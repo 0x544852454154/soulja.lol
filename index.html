@@ -1,1 +1,196 @@
-soulja pero cute
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="@soulja">
+<title>@soulja</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Courier New',monospace;color:#fff}
+#splash{position:fixed;inset:0;background:#000;z-index:9999;transition:opacity .7s ease}
+#splash.out{opacity:0;pointer-events:none}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hint{position:absolute;bottom:38px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:11px;letter-spacing:.22em;pointer-events:none;white-space:nowrap;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.15}50%{opacity:.65}}
+#vc{position:absolute;bottom:14px;right:16px;display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.5);font-size:12px;pointer-events:none;z-index:10000}
+#vc svg{width:14px;height:14px;stroke:rgba(255,255,255,.5);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+audio{display:none}
+#profile{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+background:#000 url("https://file.garden/am9m147l3hw3nqT1/Sekai-ichi%20Hatsukoi.gif") center/cover no-repeat;
+opacity:0;transition:opacity .9s ease .3s;padding:20px;overflow-y:auto}
+#profile.in{opacity:1}
+.av{position:relative;width:160px;height:160px;flex:none}
+.av img.pfp{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.av img.deco{position:absolute;left:50%;top:50%;width:120%;height:120%;transform:translate(-50%,-50%);pointer-events:none}
+.dot{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:50%;border:5px solid #111;background:#747f8d;z-index:2}
+.dot.online{background:#23a55a}.dot.idle{background:#f0b232}.dot.dnd{background:#f23f43}
+h1{font-size:26px;text-shadow:0 2px 8px #000;margin-top:10px}
+.tag{font-size:13px;opacity:.85;text-shadow:0 2px 6px #000;margin-top:-8px}
+#acts{display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;max-width:360px}
+.act{display:flex;gap:12px;align-items:center;width:100%;background:rgba(0,0,0,.45);border-radius:10px;padding:10px 12px}
+.act img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex:none}
+.act .t{min-width:0;font-size:12px;line-height:1.45;text-shadow:0 1px 4px #000}
+.act .t b{display:block;font-size:11px;letter-spacing:.1em;opacity:.7;text-transform:uppercase}
+.act .t span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs{font-size:13px;text-shadow:0 2px 6px #000;text-align:center}
+</style>
+</head>
+<body>
+
+<div id="splash">
+<canvas id="cv"></canvas>
+<span id="hint">click &middot; pwned by @soulja</span>
+<div id="vc"><svg viewBox="0 0 24 24"><path d="M1.5 12s4-7 10.5-7 10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/></svg><span id="vcn">—</span></div>
+</div>
+
+<div id="profile">
+<div class="av"><img class="pfp" id="pfp" alt=""><img class="deco" id="deco" alt="" style="display:none"><div class="dot" id="dot"></div></div>
+<h1 id="name">@soulja</h1>
+<div class="tag">@soulja</div>
+<div id="acts"></div>
+</div>
+
+<audio id="bg" src="https://file.garden/am9m147l3hw3nqT1/cinderella" loop autoplay playsinline preload="auto"></audio>
+
+<script>
+(function(){
+"use strict";
+var ID="1081132499767410688";
+
+/* ---------- light protection ---------- */
+document.addEventListener("contextmenu",function(e){e.preventDefault()},true);
+document.addEventListener("dragstart",function(e){e.preventDefault()},true);
+document.addEventListener("keydown",function(e){
+  var k=(e.key||"").toLowerCase();
+  if(e.key==="F12"||(e.ctrlKey&&e.shiftKey&&"ijck".indexOf(k)>-1)||(e.ctrlKey&&"usp".indexOf(k)>-1&&k.length===1)){e.preventDefault();}
+},true);
+
+/* ---------- view counter ---------- */
+try{
+  var n=parseInt(localStorage.getItem("soulja_views")||"0",10)||0;
+  if(!sessionStorage.getItem("soulja_viewed")){n++;localStorage.setItem("soulja_views",n);sessionStorage.setItem("soulja_viewed","1");}
+  document.getElementById("vcn").textContent=n<1000?n:(n/1000).toFixed(1)+"k";
+}catch(e){document.getElementById("vcn").textContent="1";}
+
+/* ---------- ascii particles ---------- */
+var ART=[
+"█▓▄▄         ▄▄       █▓▄▄          █▓▒▄▄ ▄▄▒▓█       ▄▄   ",
+"▓▒░█▀▀▄▄▄   ▓▒░▀▀▄▄   ▓▒░█▀  ▐▒▌   ▐▓▒░█   █░▒▓▌     ▓▒░█  ",
+"▐░████ ▒░▀▌ ▒░█████▀▄ ▐░██▌  ▒░    ▓▒░█     █░▒▓    ▐▒░██▌ ",
+" ████▓ ▀▀▀  ▐░███▀███ ▐███  ▐░▌   ▐▒░█▌     ▐█░▒▌   ▒░████ ",
+"  ▀▀▀▀██▄    ███▌ ▐█▌  ██▌  ██    ▒░ ▌       ▐ ░▒  ▐░███ █▌",
+" ██▓▒ ▐███   ▐███ ██   ▀██▄██    ▐░███▄▄▄ ▄▄▄███░▌ ████▀▀██",
+"  ▀▀▀▀▀▀▀     ▀▀▀▀▀      ▀▀▀       ▀▀▀▀▀   ▀▀▀▀▀    ▀▀   ▀ "
+];
+var cv=document.getElementById("cv"),ctx=cv.getContext("2d",{alpha:false});
+var W,H,cw,ch,P=[],mx=-9999,my=-9999,sx=0,sy=0,t=0,last=performance.now();
+function build(){
+  var cols=0;ART.forEach(function(l){if(l.length>cols)cols=l.length});
+  cw=Math.max(4,Math.min(10,Math.min(W*.7/cols,H*.35/ART.length)));ch=cw*1.65;
+  var ox=(W-cols*cw)/2,oy=(H-ART.length*ch)/2;P=[];
+  ART.forEach(function(l,r){for(var c=0;c<l.length;c++){if(l[c]===" ")continue;
+    var x=ox+c*cw,y=oy+r*ch;P.push({c:l[c],hx:x,hy:y,x:x,y:y,vx:0,vy:0,g:0});}});
+}
+function resize(){W=innerWidth;H=innerHeight;var d=Math.min(devicePixelRatio||1,1.25);
+  cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);build();mx=sx=W/2;my=sy=H/2;}
+resize();addEventListener("resize",resize);
+addEventListener("mousemove",function(e){mx=e.clientX;my=e.clientY},{passive:true});
+addEventListener("touchmove",function(e){mx=e.touches[0].clientX;my=e.touches[0].clientY},{passive:true});
+var running=true;
+function frame(now){
+  if(!running)return;
+  var dt=Math.min((now-last)/16.67,2);last=now;t+=.016*dt;
+  sx+=(mx-sx)*.055;sy+=(my-sy)*.055;
+  var ox=Math.max(-120,Math.min(120,(sx-W/2)*.12)),oy=Math.max(-120,Math.min(120,(sy-H/2)*.12));
+  var near=null,nd=1e9;
+  P.forEach(function(p){var d=(p.x-sx)*(p.x-sx)+(p.y-sy)*(p.y-sy);if(d<nd){nd=d;near=p}});
+  if(near&&nd<22500){var f=1-Math.sqrt(nd)/150;f=f*f*(3-2*f);
+    near.vx+=(sx-near.x)*.55*f;near.vy+=(sy-near.y)*.55*f;
+    P.forEach(function(p){if(p===near)return;var dx=near.x-p.x,dy=near.y-p.y,d2=dx*dx+dy*dy;
+      if(d2<13225){var s=1-Math.sqrt(d2)/115;s*=s;p.vx+=dx*.1*s;p.vy+=dy*.1*s;}});}
+  ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);
+  ctx.font=(cw*.85)+"px monospace";ctx.textBaseline="top";
+  var bh=(t*6)%360;
+  P.forEach(function(p){
+    var tx=p.hx+Math.sin(t*1.4+p.hx*.018+p.hy*.012)*4+ox*.5,ty=p.hy+Math.cos(t*1.1+p.hy*.02+p.hx*.009)*3+oy*.5;
+    p.vx+=(tx-p.x)*.02*dt;p.vy+=(ty-p.y)*.02*dt;
+    var dm=Math.pow(.9,dt);p.vx*=dm;p.vy*=dm;p.x+=p.vx*dt;p.y+=p.vy*dt;
+    var disp=Math.hypot(p.x-p.hx,p.y-p.hy);p.g+=(Math.min(1,disp/30)-p.g)*.12*dt;
+    var hue=(bh+Math.sin(p.hx*.006+p.hy*.004+t*.3)*14+360)%360,v=p.g;
+    var h=hue*(1-v)+275*v,s=(42+Math.min(1,disp/18)*15)*(1-v)+75*v,l=(60+Math.min(1,disp/18)*35)*(1-v)+62*v;
+    ctx.globalAlpha=.9;ctx.fillStyle="hsl("+h+","+s+"%,"+l+"%)";ctx.fillText(p.c,p.x,p.y);
+  });
+  ctx.globalAlpha=1;requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ---------- music ---------- */
+var bg=document.getElementById("bg");bg.volume=1;
+function play(){var p=bg.play();if(p)p.catch(function(){})}
+addEventListener("load",play);
+["click","keydown","mousemove","touchstart"].forEach(function(ev){document.addEventListener(ev,play,{once:true,passive:true})});
+setInterval(function(){if(bg.paused)play()},1000);
+
+/* ---------- lanyard profile ---------- */
+var acts=document.getElementById("acts");
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function actImg(a){
+  var i=a.assets&&a.assets.large_image;if(!i)return null;
+  if(i.indexOf("mp:external/")===0)return "https://media.discordapp.net/external/"+i.slice(12);
+  if(i.indexOf("mp:")===0)return "https://media.discordapp.net/"+i.slice(3);
+  if(i.indexOf("spotify:")===0)return "https://i.scdn.co/image/"+i.slice(8);
+  return a.application_id?"https://cdn.discordapp.com/app-assets/"+a.application_id+"/"+i+".png":null;
+}
+var TYPES=["Playing","Streaming","Listening to","Watching","","Competing in"];
+function render(d){
+  var u=d.discord_user;if(!u)return;
+  var pfp=document.getElementById("pfp"),deco=document.getElementById("deco");
+  var ext=(u.avatar&&u.avatar.indexOf("a_")===0)?"gif":"png";
+  pfp.src=u.avatar?"https://cdn.discordapp.com/avatars/"+u.id+"/"+u.avatar+"."+ext+"?size=256":"https://cdn.discordapp.com/embed/avatars/0.png";
+  var dd=u.avatar_decoration_data;
+  if(dd&&dd.asset){deco.src="https://cdn.discordapp.com/avatar-decoration-presets/"+dd.asset+".png?size=256&passthrough=true";deco.style.display="block";}
+  else deco.style.display="none";
+  document.getElementById("dot").className="dot "+(d.discord_status||"offline");
+  document.getElementById("name").textContent="@soulja";
+  acts.innerHTML="";
+  (d.activities||[]).forEach(function(a){
+    if(a.type===4){
+      var s=(a.emoji&&a.emoji.name?a.emoji.name+" ":"")+(a.state||"");
+      if(s.trim())acts.appendChild(el("div","cs",s));return;}
+    var card=el("div","act"),im=actImg(a);
+    if(a.name==="Spotify"&&d.spotify&&d.spotify.album_art_url)im=d.spotify.album_art_url;
+    if(im){var i=el("img");i.src=im;i.alt="";card.appendChild(i);}
+    var tx=el("div","t");tx.appendChild(el("b","",(TYPES[a.type]||"")+(a.type===2?"":" ")+(a.type===2?"":"")));
+    tx.firstChild.textContent=((TYPES[a.type]||"")+" "+(a.name||"")).trim();
+    if(a.details)tx.appendChild(el("span","",a.details));
+    if(a.state)tx.appendChild(el("span","",a.state));
+    card.appendChild(tx);acts.appendChild(card);
+  });
+}
+fetch("https://api.lanyard.rest/v1/users/"+ID).then(function(r){return r.json()}).then(function(j){if(j&&j.success)render(j.data)}).catch(function(){});
+function connect(){
+  var ws,hb;
+  try{ws=new WebSocket("wss://api.lanyard.rest/socket");}catch(e){return;}
+  ws.onmessage=function(e){
+    var m;try{m=JSON.parse(e.data)}catch(x){return}
+    if(m.op===1){hb=setInterval(function(){ws.send(JSON.stringify({op:3}))},m.d.heartbeat_interval);
+      ws.send(JSON.stringify({op:2,d:{subscribe_to_id:ID}}));}
+    else if(m.op===0&&m.d)render(m.d);
+  };
+  ws.onclose=function(){clearInterval(hb);setTimeout(connect,3000)};
+}
+connect();
+
+/* ---------- click to enter ---------- */
+var entered=false;
+document.getElementById("splash").addEventListener("click",function(){
+  if(entered)return;entered=true;
+  this.classList.add("out");
+  document.getElementById("profile").classList.add("in");
+  var s=this;setTimeout(function(){running=false;s.style.display="none"},800);
+});
+})();
+</script>
+</body>
+</html>
