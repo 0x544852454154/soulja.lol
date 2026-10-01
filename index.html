@@ -269,10 +269,9 @@ function frame(now){
   ctx.font=(cw*.85)+"px monospace";
   for(i=0;i<A.length;i++){p=A[i];
     step(p,p.hx+Math.sin(t*1.4+p.hx*.018+p.hy*.012)*4+ox*.5,p.hy+Math.cos(t*1.1+p.hy*.02+p.hx*.009)*3+oy*.5,dt);
-    var disp=Math.hypot(p.x-p.hx,p.y-p.hy);p.g+=(Math.min(1,disp/30)-p.g)*.12*dt;
-    var gw=Math.min(1,disp/18),v=p.g;
-    var h=hue*(1-v)+275*v,s2=(42+gw*15)*(1-v)+75*v,l=(60+gw*35)*(1-v)+62*v;
-    ctx.globalAlpha=.9;ctx.fillStyle="hsl("+h+","+s2+"%,"+l+"%)";ctx.fillText(p.c,p.x,p.y);}
+    var disp=Math.hypot(p.x-p.hx,p.y-p.hy);p.g+=(Math.min(1,Math.max(0,disp-8)/44)-p.g)*.12*dt;
+    var l=100-45*p.g;
+    ctx.globalAlpha=.9;ctx.fillStyle="hsl(0,0%,"+l+"%)";ctx.fillText(p.c,p.x,p.y);}
   ctx.globalAlpha=1;requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
