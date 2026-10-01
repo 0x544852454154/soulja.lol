@@ -76,19 +76,24 @@ audio{display:none}
   position:fixed;
   left:0;
   top:0;
+  z-index:99999;
   pointer-events:none;
-  z-index:9999;
+  user-select:none;
   opacity:0;
   color:#fff;
   font-family:"Times New Roman",serif;
-  font-size:25px;
+  font-size:26px;
   line-height:1;
   transform:translate(-50%,-50%);
   text-shadow:0 0 8px rgba(255,255,255,.55);
-  transition:opacity .2s ease,color .2s ease,transform .12s ease;
+  transition:opacity .15s ease,color .15s ease,transform .15s ease;
 }
 #crossCursor.on{opacity:1}
-#crossCursor.hot{color:#aaa;text-shadow:0 0 8px rgba(255,255,255,.25);transform:translate(-50%,-50%) scale(1.12)}
+#crossCursor.hot{
+  color:#aaa;
+  transform:translate(-50%,-50%) scale(1.15);
+  text-shadow:0 0 8px rgba(255,255,255,.25);
+}
 @media (hover:none),(pointer:coarse){#crossCursor{display:none}}
 @media (hover:hover) and (pointer:fine){*,*:hover{cursor:none!important}}
 </style>
@@ -99,7 +104,7 @@ audio{display:none}
 <span id="hint">click</span>
 
 <div id="pf" aria-label="Profile picture, click to flip"><div id="pfi"><div class="face" id="pff"><img id="pfa" alt=""><img id="pfd" alt=""></div><div class="face" id="pfb"><canvas id="pfc" width="512" height="512"></canvas></div></div></div>
-<div id="cr" class="glass"></div><div id="cd"></div><div id="crossCursor" aria-hidden="true">♰</div>
+<div id="crossCursor" aria-hidden="true">♰</div>
 
 <div id="info"><div id="nm"><span class="dot" id="dot"></span><span id="dn"></span></div><div id="un"></div><div id="acts"></div></div>
 
@@ -214,8 +219,14 @@ function resize(){
   ay=entered?ayT:H/2;mx=sx=W/2;my=sy=H/2;geom();
 }
 addEventListener("resize",resize);
-addEventListener("mousemove",function(e){mx=px=e.clientX;my=py=e.clientY;if(!cur){cur=1;rx=px;ry=py;cr.classList.add("on");cd.classList.add("on");crossCursor.classList.add("on")}},{passive:true});
-document.addEventListener("mouseover",function(e){var hot=!!(e.target.closest&&e.target.closest("a,button,#pf"));cr.classList.toggle("hot",hot);crossCursor.classList.toggle("hot",hot)});
+addEventListener("mousemove",function(e){
+  mx=px=e.clientX;
+  my=py=e.clientY;
+  crossCursor.style.left=e.clientX+"px";
+  crossCursor.style.top=e.clientY+"px";
+  if(!cur){cur=1;crossCursor.classList.add("on")}
+},{passive:true});
+document.addEventListener("mouseover",function(e){var hot=!!(e.target.closest&&e.target.closest("a,button,#pf"));crossCursor.classList.toggle("hot",hot)});
 addEventListener("touchmove",function(e){mx=e.touches[0].clientX;my=e.touches[0].clientY},{passive:true});
 resize();
 
@@ -252,8 +263,6 @@ function frame(now){
   pfi.style.transform="rotateX("+(-ty*16)+"deg) rotateY("+(fa-tx*18)+"deg)";
   /* glass cursor */
   rx+=(px-rx)*.22*dt;ry+=(py-ry)*.22*dt;
-  cr.style.transform="translate("+rx+"px,"+ry+"px) translate(-50%,-50%)";
-  cd.style.transform="translate("+px+"px,"+py+"px) translate(-50%,-50%)";
   crossCursor.style.left=px+"px";crossCursor.style.top=py+"px";
   var bh=0;
   if(ap>.01){var gr=ctx.createRadialGradient(W/2,pcyV,0,W/2,pcyV,S*1.8);gr.addColorStop(0,"rgba(255,255,255,"+(.14*ap)+")");gr.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);}
